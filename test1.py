@@ -18,7 +18,7 @@ logging.basicConfig(
 )
 
 message_to_user = "Add this to groups that you want to notify about shaking legs"
-
+humialiting_message = "I AM A PERSON WHO HAS NO SELF CONTROL"
 
 def start(update, context):
     context.bot.send_message(
@@ -28,6 +28,10 @@ def start(update, context):
 
 def echo(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+
+def humiliate(update,context):
+    """Sends humiliating message to chats"""
+    
 
 
 # Listener for "start" command
