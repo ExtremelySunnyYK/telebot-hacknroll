@@ -24,10 +24,13 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
+dict_bot = {'id': 1408688276, 'username': 'test_shake_leg_bot', 'first_name': 'testbot'}
+
 
 message_to_user = "Add this to groups that you want to notify about shaking legs"
 humialiting_message = "I AM A PERSON WHO HAS NO SELF CONTROL"
 mybots = {}
+user_groups = {}
 
 # Define constants that will allow us to reuse the deep-linking parameters.
 CHECK_THIS_OUT = 'check-this-out'
@@ -38,43 +41,32 @@ SO_COOL = 'so-cool'
 def start(update,context):
     """Sends humiliating message to chats"""
     bot = context.bot
-    mybots[update.message.chat_id] = bot
+    mybots[] = update.message.chat_id
     url = helpers.create_deep_linked_url(bot.get_me().username, CHECK_THIS_OUT, group=True)
     text = f"Add this to people you care about \n {url}"
 
-    update.message.reply_text(f'Howdy Good day {update.effective_chat.first_name}')
+    # update.message.reply_text(f'Howdy Good day {update.effective_chat.first_name}')
     update.message.reply_text(text)
-    
+    # send_humiliation()
 
-def deeplink(update,context):
-    pass
-
-def echo(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
-    send_humiliation()
 
 def humiliate(update,context):
     """Send a deep-linked URL when the command /humiliate is issued."""
-    bot = context.bot
-
-    update.message.reply_text("hi")
-
-    mybots[update.message.chat_id] = context.bot
-    print(mybots)
+    send_humiliation()
+    logging.info("sent")
 
 
 def send_humiliation():
     for id, bot in mybots.items():
         bot.send_message(id, text='Beep!')
+        logging.info((str(id),str(bot)))
+
 
 # Listener for "start" command
 start_handler = CommandHandler("start", start)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(CommandHandler("humiliate",humiliate))
 
-
-echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
-dispatcher.add_handler(echo_handler)
 
 # Start the Bot
 updater.start_polling()
