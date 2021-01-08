@@ -56,10 +56,12 @@ def humiliate(update,context):
     logging.info("sent")
 
 
-def send_humiliation():
-    for id, bot in user_groups.items():
-        bot.send_message(id, text='Beep!')
-        logging.info((str(id),str(bot)))
+def send_humiliation(user_name):
+    for chat_id in user_groups.get(user_name):
+        dict_bot.send_message(humialiting_message)
+    # for id, bot in user_groups.items():
+    #     bot.send_message(id, text='Beep!')
+    #     logging.info((str(id),str(bot)))
 
 
 # Listener for "start" command
