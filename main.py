@@ -10,8 +10,7 @@ from telegram.ext import (
     CallbackContext,
 )
 
-# TOKEN = config('KEY')
-TOKEN = "1582533456:AAFswg2spaHuwD0x6O3pG3ajSx4wjBuQL4s"
+TOKEN = config('KEY')
 updater = Updater(token=TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 logging.basicConfig(

@@ -1,2 +1,6 @@
 # telebot-hacknroll
-telebot template
+
+## Setup
+```
+pip install -r requirements.txt
+```
