@@ -1,31 +1,16 @@
-from flask import Flask, render_template, request, url_for,jsonify
-from werkzeug.utils import secure_filename
-import requests
-import os
-import io
-
-import logging
-from decouple import config
-import telegram
-from telegram import Update
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
-from telegram.ext import Updater, CommandHandler, Filters, CallbackContext
-
-# Enable logging
-from telegram.utils import helpers
 import re
+from flask import Flask, request
+import telegram
+from decouple import config
+
 
 global bot
 global TOKEN
-
 TOKEN = config('KEY')
 bot = telegram.Bot(token=TOKEN)
 
 app = Flask(__name__)
 
-# TELEGRAM_URL = "https://api.telegram.org/bot1582533456:AAFswg2spaHuwD0x6O3pG3ajSx4wjBuQL4s/"
-
-TOKEN = config('KEY')
 @app.route('/{}'.format(TOKEN), methods=['POST'])
 def respond():
    # retrieve the message in JSON and then transform it to Telegram object
@@ -47,7 +32,6 @@ def respond():
        # send the welcoming message
        bot.sendMessage(chat_id=chat_id, text=bot_welcome, reply_to_message_id=msg_id)
 
-
    else:
        try:
            # clear the message we got from any non alphabets
@@ -63,5 +47,18 @@ def respond():
 
    return 'ok'
 
+@app.route('/set_webhook', methods=['GET', 'POST'])
+def set_webhook():
+   s = bot.setWebhook('{URL}{HOOK}'.format(URL=URL, HOOK=TOKEN))
+   if s:
+       return "webhook setup ok"
+   else:
+       return "webhook setup failed"
+
+@app.route('/')
+def index():
+   return '.'
+
+
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run(threaded=True)
