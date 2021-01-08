@@ -29,7 +29,6 @@ dict_bot = {'id': 1408688276, 'username': 'test_shake_leg_bot', 'first_name': 't
 
 message_to_user = "Add this to groups that you want to notify about shaking legs"
 humialiting_message = "I AM A PERSON WHO HAS NO SELF CONTROL"
-mybots = {}
 user_groups = {}
 
 # Define constants that will allow us to reuse the deep-linking parameters.
@@ -41,7 +40,8 @@ SO_COOL = 'so-cool'
 def start(update,context):
     """Sends humiliating message to chats"""
     bot = context.bot
-    mybots[] = update.message.chat_id
+    user = update.message.from_user
+    user_groups[user['username']] = update.message.chat_id
     url = helpers.create_deep_linked_url(bot.get_me().username, CHECK_THIS_OUT, group=True)
     text = f"Add this to people you care about \n {url}"
 
@@ -57,7 +57,7 @@ def humiliate(update,context):
 
 
 def send_humiliation():
-    for id, bot in mybots.items():
+    for id, bot in user_groups.items():
         bot.send_message(id, text='Beep!')
         logging.info((str(id),str(bot)))
 
