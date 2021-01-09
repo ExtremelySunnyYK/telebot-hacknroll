@@ -50,33 +50,18 @@ def start(update, context):
 
     url = helpers.create_deep_linked_url(BOT.get_me().username, CHECK_THIS_OUT, group=True)
 
-    text = ""
+    update.message.reply_text(f'Howdy Good day {update.effective_chat.first_name}')
     if chat_id > 0: 
         text = f"Add this to people you care about \n {url}"
+        update.message.reply_text(text)
     else:
-        text = f"Your group id is: \n{chat_id}\n Add this to Shake Master!"
-
-    update.message.reply_text(f'Howdy Good day {update.effective_chat.first_name}')
-    update.message.reply_text(text)
-
-
-def humiliate(update, context):
-    """Send a deep-linked URL when the command /humiliate is issued."""
-    global BOT
-    print("BOT: ", BOT)
-    send_humiliation(update.message.from_user["username"])
-    logging.info("sent")
-
-
-def send_humiliation(user_name):
-    for chat_id in user_groups[user_name]:
-        BOT.send_message(chat_id=chat_id, text=humialiting_message)
+        text = f"Your group id is: \n`{chat_id}`\n(You can tap this to copy to clipboard!)\nAdd this to Shake Master!"
+        update.message.reply_markdown(text)
 
 
 # Listener for "start" command
 start_handler = CommandHandler("start", start)
 dispatcher.add_handler(start_handler)
-dispatcher.add_handler(CommandHandler("humiliate", humiliate))
 
 
 # Start the Bot
