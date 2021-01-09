@@ -11,7 +11,7 @@ source env/bin/activate
 pip install -r requirements.txt
 
 # To run the backend
-python -m main.py
+python -m test3.py
 ```
 
 
