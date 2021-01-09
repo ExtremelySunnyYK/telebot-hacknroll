@@ -1,67 +1,68 @@
-from flask import Flask, render_template, request, url_for,jsonify
-from werkzeug.utils import secure_filename
-import requests
-import os
-import io
-
 import logging
 from decouple import config
-import telegram
+
 from telegram import Update
+from telegram.ext import (
+    Updater,
+    CommandHandler,
+    MessageHandler,
+    Filters,
+    CallbackContext,
+)
+
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
 from telegram.ext import Updater, CommandHandler, Filters, CallbackContext
 
 # Enable logging
 from telegram.utils import helpers
-import re
-
-global bot
-global TOKEN
 
 TOKEN = config('KEY')
-bot = telegram.Bot(token=TOKEN)
+updater = Updater(token=TOKEN, use_context=True)
+dispatcher = updater.dispatcher
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
-app = Flask(__name__)
+BOT = {}
 
-# TELEGRAM_URL = "https://api.telegram.org/bot1582533456:AAFswg2spaHuwD0x6O3pG3ajSx4wjBuQL4s/"
+message_to_user = "Add this to groups that you want to notify about shaking legs"
+humialiting_message = "I AM A PERSON WHO HAS NO SELF CONTROL"
+user_groups = {}
 
-TOKEN = config('KEY')
-@app.route('/{}'.format(TOKEN), methods=['POST'])
-def respond():
-   # retrieve the message in JSON and then transform it to Telegram object
-   update = telegram.Update.de_json(request.get_json(force=True), bot)
+# Define constants that will allow us to reuse the deep-linking parameters.
+CHECK_THIS_OUT = 'check-this-out'
+USING_ENTITIES = 'using-entities-here'
+SO_COOL = 'so-cool'
 
-   chat_id = update.message.chat.id
-   msg_id = update.message.message_id
+def start(update, context):
+    """Sends humiliating message to chats"""
+    global BOT
+    
+    BOT = context.bot
+    chat_id = update.message.chat_id
+    print("BOT: ", BOT)
+    userId = update.message.from_user['username']
+    if userId not in user_groups:
+        print("Initiating new user")
+        user_groups[userId] = []
+    user_groups[userId].append(chat_id)
+    print("USER GROUPS: ", user_groups)
 
-   # Telegram understands UTF-8, so encode text for unicode compatibility
-   text = update.message.text.encode('utf-8').decode()
-   # for debugging purposes only
-   print("got text message :", text)
-   # the first time you chat with the bot AKA the welcoming message
-   if text == "/start":
-       # print the welcoming message
-       bot_welcome = """
-       Welcome to coolAvatar bot, the bot is using the service from http://avatars.adorable.io/ to generate cool looking avatars based on the name you enter so please enter a name and the bot will reply with an avatar for your name.
-       """
-       # send the welcoming message
-       bot.sendMessage(chat_id=chat_id, text=bot_welcome, reply_to_message_id=msg_id)
+    url = helpers.create_deep_linked_url(BOT.get_me().username, CHECK_THIS_OUT, group=True)
+
+    update.message.reply_text(f'Howdy Good day {update.effective_chat.first_name}')
+    if chat_id > 0: 
+        text = f"Add this to people you care about \n {url}"
+        update.message.reply_text(text)
+    else:
+        text = f"Your group id is: \n`{chat_id}`\n(You can tap this to copy to clipboard!)\nAdd this to Shake Master!"
+        update.message.reply_markdown(text)
 
 
-   else:
-       try:
-           # clear the message we got from any non alphabets
-           text = re.sub(r"\W", "_", text)
-           # create the api link for the avatar based on http://avatars.adorable.io/
-           url = "https://api.adorable.io/avatars/285/{}.png".format(text.strip())
-           # reply with a photo to the name the user sent,
-           # note that you can send photos by url and telegram will fetch it for you
-           bot.sendPhoto(chat_id=chat_id, photo=url, reply_to_message_id=msg_id)
-       except Exception:
-           # if things went wrong
-           bot.sendMessage(chat_id=chat_id, text="There was a problem in the name you used, please enter different name", reply_to_message_id=msg_id)
+# Listener for "start" command
+start_handler = CommandHandler("start", start)
+dispatcher.add_handler(start_handler)
 
-   return 'ok'
 
-if __name__ == '__main__':
-   app.run(debug=True)
+# Start the Bot
+updater.start_polling()
