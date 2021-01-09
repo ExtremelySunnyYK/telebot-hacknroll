@@ -2,7 +2,16 @@
 
 ## Setup
 ```
+virtualenv env
+env/Scripts/activate
+
+# or 
+source env/bin/activate
+
 pip install -r requirements.txt
+
+# To run the backend
+python -m main.py
 ```
 
 
