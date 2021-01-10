@@ -60,8 +60,6 @@ def start(update, context):
         text = f"Your group id is: \n`{chat_id}`\n(You can tap this to copy to clipboard!)\nAdd this to Shake Master!"
         update.message.reply_markdown(text)
 
-    # send_humiliation()
-
 
 # Listener for "start" command
 start_handler = CommandHandler("start", start)
