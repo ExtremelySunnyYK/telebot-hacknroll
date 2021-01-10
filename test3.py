@@ -50,11 +50,13 @@ def start(update, context):
 
     url = helpers.create_deep_linked_url(BOT.get_me().username, CHECK_THIS_OUT, group=True)
 
-    update.message.reply_text(f'Howdy Good day {update.effective_chat.first_name}')
+    
     if chat_id > 0: 
+        update.message.reply_text(f'Howdy Good day {update.effective_chat.first_name}')
         text = f"Add this to people you care about \n {url}"
         update.message.reply_text(text)
     else:
+        update.message.reply_text(f'Hello everyone, our friend has a problem and needs our help!')
         text = f"Your group id is: \n`{chat_id}`\n(You can tap this to copy to clipboard!)\nAdd this to Shake Master!"
         update.message.reply_markdown(text)
 
